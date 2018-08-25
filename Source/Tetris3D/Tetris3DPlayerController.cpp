@@ -9,3 +9,9 @@ ATetris3DPlayerController::ATetris3DPlayerController()
 	bEnableTouchEvents = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 }
+
+void ATetris3DPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	SetInputMode(FInputModeGameAndUI());
+}

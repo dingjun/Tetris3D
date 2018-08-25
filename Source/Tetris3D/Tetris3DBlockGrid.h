@@ -26,9 +26,13 @@ public:
 	/** How many blocks have been clicked */
 	int32 Score;
 
-	/** Number of blocks along each side of grid */
+	/** Number of blocks in one row */
 	UPROPERTY(Category=Grid, EditAnywhere, BlueprintReadOnly)
-	int32 Size;
+	int32 Width;
+
+	/** Number of blocks in one column */
+	UPROPERTY(Category=Grid, EditAnywhere, BlueprintReadOnly)
+	int32 Height;
 
 	/** Spacing of blocks */
 	UPROPERTY(Category=Grid, EditAnywhere, BlueprintReadOnly)

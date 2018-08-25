@@ -11,3 +11,26 @@ ATetris3DGameMode::ATetris3DGameMode()
 	// use our own player controller class
 	PlayerControllerClass = ATetris3DPlayerController::StaticClass();
 }
+
+void ATetris3DGameMode::BeginPlay()
+{
+  Super::BeginPlay();
+  ChangeMenuWidget(StartingWidgetClass);
+}
+
+void ATetris3DGameMode::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass)
+{
+  if (CurrentWidget != nullptr)
+  {
+    CurrentWidget->RemoveFromViewport();
+    CurrentWidget = nullptr;
+  }
+  if (NewWidgetClass != nullptr)
+  {
+    CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), NewWidgetClass);
+    if (CurrentWidget != nullptr)
+    {
+      CurrentWidget->AddToViewport();
+    }
+  }
+}

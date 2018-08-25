@@ -21,8 +21,9 @@ ATetris3DBlockGrid::ATetris3DBlockGrid()
 	ScoreText->SetupAttachment(DummyRoot);
 
 	// Set defaults
-	Size = 3;
-	BlockSpacing = 300.f;
+	Width = 10;
+	Height = 15;
+	BlockSpacing = 150.f;
 }
 
 
@@ -31,13 +32,13 @@ void ATetris3DBlockGrid::BeginPlay()
 	Super::BeginPlay();
 
 	// Number of blocks
-	const int32 NumBlocks = Size * Size;
+	const int32 NumBlocks = Width * Height;
 
 	// Loop to spawn each block
 	for(int32 BlockIndex=0; BlockIndex<NumBlocks; BlockIndex++)
 	{
-		const float XOffset = (BlockIndex/Size) * BlockSpacing; // Divide by dimension
-		const float YOffset = (BlockIndex%Size) * BlockSpacing; // Modulo gives remainder
+		const float XOffset = (BlockIndex/Width) * BlockSpacing; // Divide by dimension
+		const float YOffset = (BlockIndex%Width) * BlockSpacing; // Modulo gives remainder
 
 		// Make position vector, offset from Grid location
 		const FVector BlockLocation = FVector(XOffset, YOffset, 0.f) + GetActorLocation();

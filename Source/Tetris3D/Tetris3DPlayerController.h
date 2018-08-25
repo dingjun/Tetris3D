@@ -14,6 +14,8 @@ class ATetris3DPlayerController : public APlayerController
 
 public:
 	ATetris3DPlayerController();
+
+	virtual void BeginPlay() override;
 };
 
 
