@@ -20,7 +20,7 @@ class ATetris3DBlockGrid : public AActor
 	UPROPERTY(Category = Grid, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UTextRenderComponent* ScoreText;
 
-  TArray<int32> GridArray;
+  TArray<class UStaticMeshComponent*> GridArray;
 
 public:
 	ATetris3DBlockGrid();
@@ -45,7 +45,11 @@ protected:
 	virtual void BeginPlay() override;
 	// End AActor interface
 
+  FORCEINLINE int32 GetGridIndex(const int32& Column, const int32& Row) const { return Row * Width + Column; }
   int32 GetGridIndex(FVector Block) const;
+  bool IsFullRow(const int32& Row) const;
+  void DeleteRow(const int32& Row);
+  void MoveRowsDown(const int32& StartingRow);
 
 public:
 
@@ -59,9 +63,9 @@ public:
 
   FORCEINLINE float GetBlockSpacing() const { return BlockSpacing; }
 
-  bool IsValid(const int32& TetrominoId, const FVector& Block) const;
-
-  void Update(const int32& TetrominoId, const FVector& Block);
+  bool IsValid(const UStaticMeshComponent* Block, const FVector& Location) const;
+  void Update(UStaticMeshComponent* Block, const FVector& Location);
+  void CheckFullRows();
 };
 
 

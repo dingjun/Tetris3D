@@ -22,7 +22,8 @@ ATetris3DTetromino::ATetris3DTetromino()
   BlockArray.SetNum(4);
   for (int i = 0; i < BlockArray.Num(); ++i)
   {
-    switch (i) {
+    switch (i)
+    {
     case 0:
       Block0 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Block0"));
       BlockArray[i] = Block0;
@@ -87,11 +88,12 @@ void ATetris3DTetromino::Tick(float DeltaTime)
     // Check if the step is valid
     for (auto Block : BlockArray)
     {
-      if (Grid->IsValid(Id, Block->GetComponentLocation() + RealStep) == false)
+      if (Grid->IsValid(Block, Block->GetComponentLocation() + RealStep) == false)
       {
         if (Step.X != 0.0f)
         {
           bActive = false;
+          Grid->CheckFullRows();
           Spawner->SpawnTetromino();
         }
         return;
@@ -101,7 +103,7 @@ void ATetris3DTetromino::Tick(float DeltaTime)
     // Remove old position from Grid
     for (auto Block : BlockArray)
     {
-      Grid->Update(-1, Block->GetComponentLocation());
+      Grid->Update(NULL, Block->GetComponentLocation());
     }
 
     // Update position
@@ -110,7 +112,7 @@ void ATetris3DTetromino::Tick(float DeltaTime)
     // Add new position to Grid
     for (auto Block : BlockArray)
     {
-      Grid->Update(Id, Block->GetComponentLocation());
+      Grid->Update(Block, Block->GetComponentLocation());
     }
 
     if (Step.X != 0.0f)

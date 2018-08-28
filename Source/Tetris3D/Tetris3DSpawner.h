@@ -15,7 +15,6 @@ class TETRIS3D_API ATetris3DSpawner : public AActor
   UPROPERTY(Category = Spawner, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
   class USceneComponent* DummyRoot;
 
-  int32 TetrominoIndex;
   class ATetris3DTetromino* ActiveTetromino;
   
 protected:

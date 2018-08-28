@@ -20,7 +20,6 @@ void ATetris3DSpawner::BeginPlay()
 {
   Super::BeginPlay();
 
-  TetrominoIndex = 0;
   SpawnTetromino();
 }
 
@@ -39,8 +38,6 @@ void ATetris3DSpawner::SpawnTetromino()
     ActiveTetromino = GetWorld()->SpawnActor<ATetris3DTetromino>(TetrominoT, GetActorLocation(), FRotator(0, 0, 0));
     break;
   }
-  ActiveTetromino->SetId(TetrominoIndex);
-  ++TetrominoIndex;
 }
 
 void ATetris3DSpawner::MoveActiveTetrominoLeft()

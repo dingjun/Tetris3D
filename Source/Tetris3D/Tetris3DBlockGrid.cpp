@@ -2,8 +2,7 @@
 
 #include "Tetris3DBlockGrid.h"
 #include "Components/TextRenderComponent.h"
-#include "Engine/World.h"
-#include "Engine.h"
+#include "Components/StaticMeshComponent.h"
 
 #define LOCTEXT_NAMESPACE "PuzzleBlockGrid"
 
@@ -53,7 +52,7 @@ void ATetris3DBlockGrid::BeginPlay()
 		}
 	}*/
 
-  GridArray.Init(-1, NumBlocks);
+  GridArray.Init(NULL, NumBlocks);
 }
 
 
@@ -78,20 +77,75 @@ int32 ATetris3DBlockGrid::GetGridIndex(FVector Block) const
 }
 
 
-bool ATetris3DBlockGrid::IsValid(const int32& TetrominoId, const FVector& Block) const
+bool ATetris3DBlockGrid::IsFullRow(const int32& Row) const
 {
-  const int32 GridIndex = GetGridIndex(Block);
-
-  //GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::FromInt(GridIndex));
-
-  return !(GridIndex < 0 || GridArray[GridIndex] >= 0 && GridArray[GridIndex] != TetrominoId);
+  for (int32 i = 0; i < Width; ++i)
+  {
+    int32 GridIndex = GetGridIndex(i, Row);
+    if (GridArray[GridIndex] == NULL)
+    {
+      return false;
+    }
+  }
+  return true;
 }
 
 
-void ATetris3DBlockGrid::Update(const int32& TetrominoId, const FVector& Block)
+void ATetris3DBlockGrid::DeleteRow(const int32& Row)
 {
-  const int32 GridIndex = GetGridIndex(Block);
-  GridArray[GridIndex] = TetrominoId;
+  for (int32 i = 0; i < Width; ++i)
+  {
+    int32 GridIndex = GetGridIndex(i, Row);
+    GridArray[GridIndex]->DestroyComponent();
+    GridArray[GridIndex] = NULL;
+  }
+}
+
+
+void ATetris3DBlockGrid::MoveRowsDown(const int32& StartingRow)
+{
+  for (int32 Row = StartingRow; Row < Height; ++Row)
+  {
+    for (int32 Column = 0; Column < Width; ++Column)
+    {
+      int32 GridIndex = GetGridIndex(Column, Row);
+      if (GridArray[GridIndex] != NULL)
+      {
+        int32 NewGridIndex = GetGridIndex(Column, Row - 1);
+        GridArray[NewGridIndex] = GridArray[GridIndex];
+        GridArray[GridIndex] = NULL;
+        GridArray[NewGridIndex]->AddRelativeLocation(FVector(-BlockSpacing, 0.0f, 0.0));
+      }
+    }
+  }
+}
+
+
+bool ATetris3DBlockGrid::IsValid(const UStaticMeshComponent* Block, const FVector& Location) const
+{
+  const int32 GridIndex = GetGridIndex(Location);
+  return !(GridIndex < 0 || GridArray[GridIndex] != NULL && GridArray[GridIndex]->GetOwner() != Block->GetOwner());
+}
+
+
+void ATetris3DBlockGrid::Update(UStaticMeshComponent* Block, const FVector& Location)
+{
+  const int32 GridIndex = GetGridIndex(Location);
+  GridArray[GridIndex] = Block;
+}
+
+
+void ATetris3DBlockGrid::CheckFullRows()
+{
+  for (int32 i = 0; i < Height; ++i)
+  {
+    if (IsFullRow(i))
+    {
+      DeleteRow(i);
+      MoveRowsDown(i + 1);
+      --i;
+    }
+  }
 }
 
 #undef LOCTEXT_NAMESPACE
