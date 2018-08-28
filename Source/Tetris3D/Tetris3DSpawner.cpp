@@ -27,19 +27,33 @@ void ATetris3DSpawner::BeginPlay()
 void ATetris3DSpawner::SpawnTetromino()
 {
   int32 RandIndex = FMath::RandHelper(3);
-  ATetris3DTetromino* Tetromino = NULL;
   switch (RandIndex)
   {
   case 0:
-    Tetromino = GetWorld()->SpawnActor<ATetris3DTetromino>(TetrominoI, GetActorLocation(), FRotator(0, 0, 0));
+    ActiveTetromino = GetWorld()->SpawnActor<ATetris3DTetromino>(TetrominoI, GetActorLocation(), FRotator(0, 0, 0));
     break;
   case 1:
-    Tetromino = GetWorld()->SpawnActor<ATetris3DTetromino>(TetrominoO, GetActorLocation(), FRotator(0, 0, 0));
+    ActiveTetromino = GetWorld()->SpawnActor<ATetris3DTetromino>(TetrominoO, GetActorLocation(), FRotator(0, 0, 0));
     break;
   case 2:
-    Tetromino = GetWorld()->SpawnActor<ATetris3DTetromino>(TetrominoT, GetActorLocation(), FRotator(0, 0, 0));
+    ActiveTetromino = GetWorld()->SpawnActor<ATetris3DTetromino>(TetrominoT, GetActorLocation(), FRotator(0, 0, 0));
     break;
   }
-  Tetromino->SetId(TetrominoIndex);
+  ActiveTetromino->SetId(TetrominoIndex);
   ++TetrominoIndex;
+}
+
+void ATetris3DSpawner::MoveActiveTetrominoLeft()
+{
+  ActiveTetromino->MoveLeft();
+}
+
+void ATetris3DSpawner::MoveActiveTetrominoRight()
+{
+  ActiveTetromino->MoveRight();
+}
+
+void ATetris3DSpawner::MoveActiveTetrominoDown()
+{
+  ActiveTetromino->MoveDown();
 }

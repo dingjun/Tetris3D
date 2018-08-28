@@ -40,13 +40,12 @@ public:
 	UPROPERTY(Category=Grid, EditAnywhere, BlueprintReadOnly)
 	float BlockSpacing;
 
-private:
-  int32 GetGridIndex(FVector Block) const;
-
 protected:
 	// Begin AActor interface
 	virtual void BeginPlay() override;
 	// End AActor interface
+
+  int32 GetGridIndex(FVector Block) const;
 
 public:
 
@@ -57,6 +56,8 @@ public:
 	FORCEINLINE class USceneComponent* GetDummyRoot() const { return DummyRoot; }
 	/** Returns ScoreText subobject **/
 	FORCEINLINE class UTextRenderComponent* GetScoreText() const { return ScoreText; }
+
+  FORCEINLINE float GetBlockSpacing() const { return BlockSpacing; }
 
   bool IsValid(const int32& TetrominoId, const FVector& Block) const;
 

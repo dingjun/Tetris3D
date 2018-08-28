@@ -18,9 +18,10 @@ class TETRIS3D_API ATetris3DTetromino : public AActor
   TArray<class UStaticMeshComponent*> BlockArray;
 
   int32 Id;
-  bool bEnable;
+  bool bActive;
   float StepTime;
   float ElapsedTime;
+  FVector Step;
   class ATetris3DBlockGrid* Grid;
   class ATetris3DSpawner* Spawner;
 
@@ -54,4 +55,8 @@ public:
   FORCEINLINE TArray<class UStaticMeshComponent*> GetBlockMesh() const { return BlockArray; }
 
   FORCEINLINE void SetId(const int32 Index) { Id = Index; }
+
+  void MoveLeft();
+  void MoveRight();
+  void MoveDown();
 };

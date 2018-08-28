@@ -53,7 +53,7 @@ void ATetris3DTetromino::BeginPlay()
 {
   Super::BeginPlay();
 	
-  bEnable = true;
+  bActive = true;
   StepTime = 1.0f;
   ElapsedTime = 0.0f;
 
@@ -69,23 +69,31 @@ void ATetris3DTetromino::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-  if (bEnable == false)
+  if (bActive == false)
   {
     return;
   }
 
   ElapsedTime += DeltaTime;
-  if (ElapsedTime > StepTime)
+  if (ElapsedTime > StepTime || Step.X != 0.0f || Step.Y != 0.0f)
   {
-    FVector Step(-150.0f, 0.0f, 0.0f);
+    if (ElapsedTime > StepTime)
+    {
+      Step = FVector(-1.0f, 0.0f, 0.0f);
+    }
+
+    FVector RealStep = Step * Grid->GetBlockSpacing();
 
     // Check if the step is valid
     for (auto Block : BlockArray)
     {
-      if (Grid->IsValid(Id, Block->GetComponentLocation() + Step) == false)
+      if (Grid->IsValid(Id, Block->GetComponentLocation() + RealStep) == false)
       {
-        bEnable = false;
-        Spawner->SpawnTetromino();
+        if (Step.X != 0.0f)
+        {
+          bActive = false;
+          Spawner->SpawnTetromino();
+        }
         return;
       }
     }
@@ -97,7 +105,7 @@ void ATetris3DTetromino::Tick(float DeltaTime)
     }
 
     // Update position
-    SetActorLocation(GetActorLocation() + Step);
+    SetActorLocation(GetActorLocation() + RealStep);
 
     // Add new position to Grid
     for (auto Block : BlockArray)
@@ -105,7 +113,25 @@ void ATetris3DTetromino::Tick(float DeltaTime)
       Grid->Update(Id, Block->GetComponentLocation());
     }
 
-    ElapsedTime = 0.0f;
+    if (Step.X != 0.0f)
+    {
+      ElapsedTime = 0.0f;
+    }
+    Step = FVector(0.0f, 0.0f, 0.0f);
   }
 }
 
+void ATetris3DTetromino::MoveLeft()
+{
+  Step = FVector(0.0f, -1.0f, 0.0f);
+}
+
+void ATetris3DTetromino::MoveRight()
+{
+  Step = FVector(0.0f, 1.0f, 0.0f);
+}
+
+void ATetris3DTetromino::MoveDown()
+{
+  Step = FVector(-1.0f, 0.0f, 0.0f);
+}

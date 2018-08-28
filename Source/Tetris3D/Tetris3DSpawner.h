@@ -16,6 +16,7 @@ class TETRIS3D_API ATetris3DSpawner : public AActor
   class USceneComponent* DummyRoot;
 
   int32 TetrominoIndex;
+  class ATetris3DTetromino* ActiveTetromino;
   
 protected:
   /** The tetromino to spawn */
@@ -42,4 +43,7 @@ public:
   UFUNCTION(BlueprintCallable, Category = "Spawner")
   void SpawnTetromino();
 	
+  void MoveActiveTetrominoLeft();
+  void MoveActiveTetrominoRight();
+  void MoveActiveTetrominoDown();
 };

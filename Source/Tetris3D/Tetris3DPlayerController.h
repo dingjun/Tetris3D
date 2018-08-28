@@ -12,10 +12,19 @@ class ATetris3DPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
+  class ATetris3DSpawner* Spawner;
+
 public:
 	ATetris3DPlayerController();
 
 	virtual void BeginPlay() override;
+
+  virtual void SetupInputComponent() override;
+
+protected:
+  void MoveLeft();
+  void MoveRight();
+  void MoveDown();
 };
 
 
