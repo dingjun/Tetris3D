@@ -20,6 +20,8 @@ class ATetris3DBlockGrid : public AActor
 	UPROPERTY(Category = Grid, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UTextRenderComponent* ScoreText;
 
+  TArray<int32> GridArray;
+
 public:
 	ATetris3DBlockGrid();
 
@@ -38,6 +40,9 @@ public:
 	UPROPERTY(Category=Grid, EditAnywhere, BlueprintReadOnly)
 	float BlockSpacing;
 
+private:
+  int32 GetGridIndex(FVector Block) const;
+
 protected:
 	// Begin AActor interface
 	virtual void BeginPlay() override;
@@ -52,6 +57,10 @@ public:
 	FORCEINLINE class USceneComponent* GetDummyRoot() const { return DummyRoot; }
 	/** Returns ScoreText subobject **/
 	FORCEINLINE class UTextRenderComponent* GetScoreText() const { return ScoreText; }
+
+  bool IsValid(const int32& TetrominoId, const FVector& Block) const;
+
+  void Update(const int32& TetrominoId, const FVector& Block);
 };
 
 
