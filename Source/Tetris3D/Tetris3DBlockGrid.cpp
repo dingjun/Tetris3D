@@ -1,6 +1,7 @@
 // Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #include "Tetris3DBlockGrid.h"
+#include "Tetris3DGameMode.h"
 #include "Components/TextRenderComponent.h"
 #include "Components/StaticMeshComponent.h"
 
@@ -23,6 +24,7 @@ ATetris3DBlockGrid::ATetris3DBlockGrid()
 	Width = 10;
 	Height = 15;
 	BlockSpacing = 150.f;
+  ScoreToWin = 3;
 }
 
 
@@ -30,29 +32,19 @@ void ATetris3DBlockGrid::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Number of blocks
-	const int32 NumBlocks = Width * Height;
+  GameMode = (ATetris3DGameMode*)(GetWorld()->GetAuthGameMode());
+}
 
-	// Loop to spawn each block
-	/*for(int32 BlockIndex=0; BlockIndex<NumBlocks; BlockIndex++)
-	{
-		const float XOffset = (BlockIndex/Width) * BlockSpacing; // Divide by dimension
-		const float YOffset = (BlockIndex%Width) * BlockSpacing; // Modulo gives remainder
 
-		// Make position vector, offset from Grid location
-		const FVector BlockLocation = FVector(XOffset, YOffset, 0.f) + GetActorLocation();
+void ATetris3DBlockGrid::AddScore(const int32& NumLines)
+{
+	// Increment score
+	Score += NumLines;
 
-		// Spawn a block
-		ATetris3DBlock* NewBlock = GetWorld()->SpawnActor<ATetris3DBlock>(BlockLocation, FRotator(0,0,0));
-
-		// Tell the block about its owner
-		if (NewBlock != nullptr)
-		{
-			NewBlock->OwningGrid = this;
-		}
-	}*/
-
-  GridArray.Init(NULL, NumBlocks);
+  if (Score >= ScoreToWin)
+  {
+    GameMode->SetCurrentState(ETetris3DPlayState::EWon);
+  }
 }
 
 
@@ -63,6 +55,12 @@ void ATetris3DBlockGrid::AddScore()
 
 	// Update text
 	ScoreText->SetText(FText::Format(LOCTEXT("ScoreFmt", "Score: {0}"), FText::AsNumber(Score)));
+}
+
+
+FText ATetris3DBlockGrid::GetCurrentScoreText() const
+{
+  return FText::Format(LOCTEXT("ScoreFmt", "Score: {0}"), FText::AsNumber(Score));
 }
 
 
@@ -121,6 +119,34 @@ void ATetris3DBlockGrid::MoveRowsDown(const int32& StartingRow)
 }
 
 
+void ATetris3DBlockGrid::Init()
+{
+  // Number of blocks
+  const int32 NumBlocks = Width * Height;
+  GridArray.Init(NULL, NumBlocks);
+  Score = 0;
+
+  // Loop to spawn each block
+  /*for(int32 BlockIndex=0; BlockIndex<NumBlocks; BlockIndex++)
+  {
+    const float XOffset = (BlockIndex/Width) * BlockSpacing; // Divide by dimension
+    const float YOffset = (BlockIndex%Width) * BlockSpacing; // Modulo gives remainder
+
+    // Make position vector, offset from Grid location
+    const FVector BlockLocation = FVector(XOffset, YOffset, 0.f) + GetActorLocation();
+
+    // Spawn a block
+    ATetris3DBlock* NewBlock = GetWorld()->SpawnActor<ATetris3DBlock>(BlockLocation, FRotator(0,0,0));
+
+    // Tell the block about its owner
+    if (NewBlock != nullptr)
+    {
+      NewBlock->OwningGrid = this;
+    }
+  }*/
+}
+
+
 bool ATetris3DBlockGrid::IsValid(const UStaticMeshComponent* Block, const FVector& Location) const
 {
   const int32 GridIndex = GetGridIndex(Location);
@@ -137,15 +163,18 @@ void ATetris3DBlockGrid::Update(UStaticMeshComponent* Block, const FVector& Loca
 
 void ATetris3DBlockGrid::CheckFullRows()
 {
+  int32 NumRows = 0;
   for (int32 i = 0; i < Height; ++i)
   {
     if (IsFullRow(i))
     {
       DeleteRow(i);
       MoveRowsDown(i + 1);
+      ++NumRows;
       --i;
     }
   }
+  AddScore(NumRows);
 }
 
 #undef LOCTEXT_NAMESPACE

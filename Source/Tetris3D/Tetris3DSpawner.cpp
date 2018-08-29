@@ -2,6 +2,7 @@
 
 #include "Tetris3DSpawner.h"
 #include "Tetris3DTetromino.h"
+#include "Tetris3DGameMode.h"
 #include "Engine/World.h"
 
 // Sets default values
@@ -20,37 +21,54 @@ void ATetris3DSpawner::BeginPlay()
 {
   Super::BeginPlay();
 
-  SpawnTetromino();
+  GameMode = (ATetris3DGameMode*)(GetWorld()->GetAuthGameMode());
 }
 
 void ATetris3DSpawner::SpawnTetromino()
 {
+  if (GameMode->GetCurrentState() != ETetris3DPlayState::EPlaying)
+  {
+    return;
+  }
+
+  ATetris3DTetromino* Tetromino;
   int32 RandIndex = FMath::RandHelper(3);
   switch (RandIndex)
   {
   case 0:
-    ActiveTetromino = GetWorld()->SpawnActor<ATetris3DTetromino>(TetrominoI, GetActorLocation(), FRotator(0, 0, 0));
+    Tetromino = GetWorld()->SpawnActor<ATetris3DTetromino>(TetrominoI, GetActorLocation(), FRotator(0, 0, 0));
     break;
   case 1:
-    ActiveTetromino = GetWorld()->SpawnActor<ATetris3DTetromino>(TetrominoO, GetActorLocation(), FRotator(0, 0, 0));
+    Tetromino = GetWorld()->SpawnActor<ATetris3DTetromino>(TetrominoO, GetActorLocation(), FRotator(0, 0, 0));
     break;
   case 2:
-    ActiveTetromino = GetWorld()->SpawnActor<ATetris3DTetromino>(TetrominoT, GetActorLocation(), FRotator(0, 0, 0));
+    Tetromino = GetWorld()->SpawnActor<ATetris3DTetromino>(TetrominoT, GetActorLocation(), FRotator(0, 0, 0));
     break;
   }
+  TetrominoArray.Push(Tetromino);
+}
+
+void ATetris3DSpawner::Init()
+{
+  for (auto Tetromino : TetrominoArray)
+  {
+    Tetromino->Destroy();
+  }
+  TetrominoArray.SetNum(0);
+  SpawnTetromino();
 }
 
 void ATetris3DSpawner::MoveActiveTetrominoLeft()
 {
-  ActiveTetromino->MoveLeft();
+  TetrominoArray.Top()->MoveLeft();
 }
 
 void ATetris3DSpawner::MoveActiveTetrominoRight()
 {
-  ActiveTetromino->MoveRight();
+  TetrominoArray.Top()->MoveRight();
 }
 
 void ATetris3DSpawner::MoveActiveTetrominoDown()
 {
-  ActiveTetromino->MoveDown();
+  TetrominoArray.Top()->MoveDown();
 }

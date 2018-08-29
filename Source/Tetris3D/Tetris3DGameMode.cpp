@@ -15,6 +15,7 @@ ATetris3DGameMode::ATetris3DGameMode()
 void ATetris3DGameMode::BeginPlay()
 {
   Super::BeginPlay();
+  SetCurrentState(ETetris3DPlayState::EReady);
   ChangeMenuWidget(StartingWidgetClass);
 }
 
@@ -33,4 +34,32 @@ void ATetris3DGameMode::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass
       CurrentWidget->AddToViewport();
     }
   }
+}
+
+FText ATetris3DGameMode::GetCurrentStateText() const
+{
+  FText StateText;
+  switch (CurrentState)
+  {
+  case ETetris3DPlayState::EReady:
+    StateText = FText::FromString("Ready?");
+    break;
+  case ETetris3DPlayState::EWon:
+    StateText = FText::FromString("YOU WIN!");
+    break;
+  case ETetris3DPlayState::ELost:
+    StateText = FText::FromString("GAME OVER!");
+    break;
+  }
+  return StateText;
+}
+
+ETetris3DPlayState ATetris3DGameMode::GetCurrentState() const
+{
+  return CurrentState;
+}
+
+void ATetris3DGameMode::SetCurrentState(ETetris3DPlayState NewState)
+{
+  CurrentState = NewState;
 }

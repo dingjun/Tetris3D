@@ -15,7 +15,8 @@ class TETRIS3D_API ATetris3DSpawner : public AActor
   UPROPERTY(Category = Spawner, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
   class USceneComponent* DummyRoot;
 
-  class ATetris3DTetromino* ActiveTetromino;
+  class ATetris3DGameMode* GameMode;
+  TArray<class ATetris3DTetromino*> TetrominoArray;
   
 protected:
   /** The tetromino to spawn */
@@ -38,8 +39,11 @@ public:
   /** Returns DummyRoot subobject **/
   FORCEINLINE class USceneComponent* GetDummyRoot() const { return DummyRoot; }
 
+  UFUNCTION(BlueprintCallable, Category = Spawner)
+  void Init();
+
   /** Handle spawning a new tetromino **/
-  UFUNCTION(BlueprintCallable, Category = "Spawner")
+  UFUNCTION(BlueprintCallable, Category = Spawner)
   void SpawnTetromino();
 	
   void MoveActiveTetrominoLeft();

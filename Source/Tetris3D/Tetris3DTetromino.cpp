@@ -3,6 +3,7 @@
 #include "Tetris3DTetromino.h"
 #include "Tetris3DBlockGrid.h"
 #include "Tetris3DSpawner.h"
+#include "Tetris3DGameMode.h"
 #include "Engine.h"
 #include "Components/StaticMeshComponent.h"
 
@@ -63,6 +64,17 @@ void ATetris3DTetromino::BeginPlay()
 
   TActorIterator<ATetris3DSpawner> ActorIteratorSpawner(GetWorld());
   Spawner = *ActorIteratorSpawner;
+
+  // Check if in valid position
+  for (auto Block : BlockArray)
+  {
+    if (Grid->IsValid(Block, Block->GetComponentLocation()) == false)
+    {
+      ATetris3DGameMode* GameMode = (ATetris3DGameMode*)(GetWorld()->GetAuthGameMode());
+      GameMode->SetCurrentState(ETetris3DPlayState::ELost);
+      return;
+    }
+  }
 }
 
 // Called every frame

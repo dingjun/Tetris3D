@@ -20,7 +20,10 @@ class ATetris3DBlockGrid : public AActor
 	UPROPERTY(Category = Grid, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UTextRenderComponent* ScoreText;
 
+  class ATetris3DGameMode* GameMode;
+
   TArray<class UStaticMeshComponent*> GridArray;
+  int32 ScoreToWin;
 
 public:
 	ATetris3DBlockGrid();
@@ -50,8 +53,14 @@ protected:
   bool IsFullRow(const int32& Row) const;
   void DeleteRow(const int32& Row);
   void MoveRowsDown(const int32& StartingRow);
+  void AddScore(const int32& NumLines);
 
 public:
+  UFUNCTION(BlueprintPure, Category = Grid)
+  FText GetCurrentScoreText() const;
+
+  UFUNCTION(BlueprintCallable, Category = Grid)
+  void Init();
 
 	/** Handle the block being clicked */
 	void AddScore();
